@@ -1,5 +1,29 @@
 # restTest
 
+This is a backend coding assignment for Bench's full-stack software developer application. Scroll down to the [getting started section](##getting-started) for the project description or visit (resttest.bench.co)[http://resttest.bench.co/].
+
+## Run it yourself
+
+### From compiled binaries
+
+Download and run right binary for your system from the [`/bin`](bin/) directory.
+
+### Build and install binaries from source
+
+You need to have golang installed, then run:
+
+```bash
+go get -v github.com/mujz/restTest
+```
+
+## Implementation
+
+Since we need to execute multiple operations concurrently (ex. fetching pages, calculating the balance), it's preferrable to use a language the has support for coroutines. Thus, I'm choosing to use Go. Here's how it will work:
+
+1. We use the standard `net/http` package to make a simple GET request. This function will be used by the next 2 operations.
+1. We fetch the first page and read the `totalCount` to know how many pages to fetch. We then start as many coroutines as the number of pages minus 1 (since we don't need to refetch the first page). Each coroutine fetches a page and atomically increments the balance of that day.
+1. After all coroutines finish, we print the running daily balances and overall balance to the console.
+
 ## Getting Started
 
 Welcome to the Bench Rest Test. The purpose of this exercise is to demonstrate your ability to reason about rudimentary APIs and data transformation. You can use any language you feel comfortable with.
@@ -28,7 +52,7 @@ Responses
 
 **200 OK**
 
-```json
+```js
 {
   "totalCount": 32, // Integer, total number of transactions across all pages
   "page": 1, // Integer, current page
