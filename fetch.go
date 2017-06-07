@@ -40,7 +40,7 @@ func (p Page) String() string {
 		p.TotalCount, p.Page, p.Transactions)
 }
 
-// Fetches the page from the restTest API server and decodes it into Page
+// Fetches the page from the restTest API server and decodes it into Page.
 // Returns HTTPError if response status is not 200
 func FetchPage(pageNumber int) (*Page, error) {
 	return fetchPage(pageURL(pageNumber, urlTemplate))
