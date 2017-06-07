@@ -2,13 +2,11 @@ package main
 
 import "fmt"
 
-type CustomError struct {
-	ErrorString string
-	Status      int
+type HTTPError struct {
+	Status     string
+	StatusCode int
 }
 
-var RemoteServerErr = CustomError{ErrorString: "Remote server responded with status"}
-
-func (err CustomError) Error() string {
-	return fmt.Sprintf("%s %d", err.ErrorString, err.Status)
+func (err HTTPError) Error() string {
+	return fmt.Sprintf("Remote server responded with status: %s", err.Status)
 }

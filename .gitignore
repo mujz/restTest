@@ -2,3 +2,4 @@
 *.swo
 *~
 coverage.out
+bin/restTest

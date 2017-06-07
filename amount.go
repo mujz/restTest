@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"strconv"
 	"strings"
 )
@@ -15,6 +16,19 @@ func (amount *Amount) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return err
 	}
-	*amount = Amount(n)
+	*amount = Amount(toFixed(n, 2))
 	return nil
+}
+
+func (a Amount) Add(b Amount) Amount {
+	return Amount(toFixed(float64(a+b), 2))
+}
+
+func round(num float64) int {
+	return int(num + math.Copysign(0.5, num))
+}
+
+func toFixed(num float64, precision int) float64 {
+	output := math.Pow(10, float64(precision))
+	return float64(round(num*output)) / output
 }

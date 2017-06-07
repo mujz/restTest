@@ -1,13 +1,11 @@
 package main
 
-import (
-	"testing"
-)
+import "testing"
 
-func TestCustomError(t *testing.T) {
-	err := CustomError{"test error", 123}
-
-	if expected := "test error 123"; err.Error() != expected {
-		t.Errorf("Expected error string %s, got %s", expected, err.Error())
+func TestHTTPError(t *testing.T) {
+	err := HTTPError{"404 Not Found", 404}
+	expected := "Remote server responded with status: 404 Not Found"
+	if actual := err.Error(); actual != expected {
+		t.Errorf("Expected error %s, Got %s", expected, actual)
 	}
 }
