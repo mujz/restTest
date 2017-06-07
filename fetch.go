@@ -1,4 +1,4 @@
-package main
+package restTest
 
 import (
 	"encoding/json"
@@ -16,12 +16,12 @@ const (
 	// Maximum number of idle http connections
 	maxIdleConnections = 100
 	// default number of concurrent go routines to fetch pages
-	defaultConcurrency = 20
+	DefaultConcurrency = 20
 )
 
 var (
 	// number of concurrent go routines that fetch pages
-	Concurrency = defaultConcurrency
+	Concurrency = DefaultConcurrency
 )
 
 type Page struct {

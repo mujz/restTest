@@ -1,4 +1,4 @@
-package main
+package restTest
 
 import (
 	"encoding/json"
@@ -257,10 +257,10 @@ func TestFetchAllPages(t *testing.T) {
 
 				go func(ch chan []Transaction) { <-ch }(ch)
 
-				fetchAllTransactions(ch, url, defaultConcurrency)
+				fetchAllTransactions(ch, url, DefaultConcurrency)
 			}(ch, mockServer.URL+"/%d")
 		} else {
-			go fetchAllTransactions(ch, mockServer.URL+"/%d", defaultConcurrency)
+			go fetchAllTransactions(ch, mockServer.URL+"/%d", DefaultConcurrency)
 
 			go func(ch chan []Transaction, tc testCase, mockServer *httptest.Server) {
 				defer mockServer.Close()

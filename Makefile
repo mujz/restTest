@@ -3,8 +3,9 @@ all: run
 fmt:
 	go fmt
 
+# TODO do this better
 build: fmt
-	go build -o ./bin/restTest
+	cd cmd && go build -o ../bin/restTest
 
 run: build
 	./bin/restTest
