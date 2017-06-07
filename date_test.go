@@ -72,7 +72,7 @@ func TestByDateSort(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		ByDate(tc.input).Sort()
+		byDate(tc.input).Sort()
 		for i, a := range tc.input {
 			if e := tc.expected[i]; !e.Equal(a.Time) {
 				t.Errorf("Expected date %v, Got %v", e, a)
@@ -83,7 +83,7 @@ func TestByDateSort(t *testing.T) {
 }
 
 func TestByDateLen(t *testing.T) {
-	tc := ByDate([]Date{Date{}, Date{}})
+	tc := byDate([]Date{Date{}, Date{}})
 	actual := tc.Len()
 	if expected := 2; actual != expected {
 		t.Errorf("Expected length %d, got %d", expected, actual)
@@ -97,7 +97,7 @@ func TestByDateSwap(t *testing.T) {
 	)
 	d1.Time, _ = time.Parse(dateTemplate, "2016-01-01")
 	d2.Time, _ = time.Parse(dateTemplate, "2016-01-02")
-	tc := ByDate([]Date{d1, d2})
+	tc := byDate([]Date{d1, d2})
 	tc.Swap(0, 1)
 	if tc[0] != d2 || tc[1] != d1 {
 		t.Errorf("Swap failed. \n1. Expected: %v, Got: %v\n2. Expected: %v, Got: %v", d2, tc[0], d1, tc[1])
@@ -113,7 +113,7 @@ func TestByDateLess(t *testing.T) {
 	d1.Time, _ = time.Parse(dateTemplate, "2016-01-01")
 	d2.Time, _ = time.Parse(dateTemplate, "2016-01-02")
 	d3.Time, _ = time.Parse(dateTemplate, "2015-01-02")
-	tc := ByDate([]Date{d1, d2, d3})
+	tc := byDate([]Date{d1, d2, d3})
 	if !tc.Less(0, 1) {
 		t.Errorf("Expected date %v, to be before %v", tc[0], tc[1])
 	}

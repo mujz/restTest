@@ -46,7 +46,7 @@ func (db DailyBalances) GetRunningBalance() Amount {
 }
 
 func (db *DailyBalances) Sort() {
-	ByDate(db.days).Sort()
+	byDate(db.days).Sort()
 }
 
 // TODO document this
