@@ -3,10 +3,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 )
 
 func main() {
+	flag.Parse()
+
 	// Get transactions from restTest API server
 	ch := FetchAllTransactions()
 

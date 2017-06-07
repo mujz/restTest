@@ -95,7 +95,7 @@ func (h *restTestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		// return 404 if attempting to get too many pages and totalCount is non-negative
 		if h.totalCount > 0 {
-			pageCount := int(math.Floor(float64(h.totalCount-1)/TransactionsPerPage) + 1)
+			pageCount := int(math.Floor(float64(h.totalCount-1)/transactionsPerPage) + 1)
 			if pageNumber > pageCount {
 				w.WriteHeader(http.StatusNotFound)
 				return
@@ -207,8 +207,8 @@ func TestFetchAllPagesFromRemoteServer(t *testing.T) {
 		all = append(all, actual...)
 
 		// assert we didn't get more than the expected transactions per page count
-		if a := len(actual); a > TransactionsPerPage {
-			t.Errorf("Expected transactions per page less than or equal to %d, Got %d", TransactionsPerPage, a)
+		if a := len(actual); a > transactionsPerPage {
+			t.Errorf("Expected transactions per page less than or equal to %d, Got %d", transactionsPerPage, a)
 		}
 	}
 
@@ -257,10 +257,10 @@ func TestFetchAllPages(t *testing.T) {
 
 				go func(ch chan []Transaction) { <-ch }(ch)
 
-				fetchAllTransactions(ch, url, Concurrency)
+				fetchAllTransactions(ch, url, defaultConcurrency)
 			}(ch, mockServer.URL+"/%d")
 		} else {
-			go fetchAllTransactions(ch, mockServer.URL+"/%d", Concurrency)
+			go fetchAllTransactions(ch, mockServer.URL+"/%d", defaultConcurrency)
 
 			go func(ch chan []Transaction, tc testCase, mockServer *httptest.Server) {
 				defer mockServer.Close()
