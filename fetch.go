@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"math"
 	"net/http"
@@ -22,7 +21,7 @@ const (
 
 var (
 	// number of concurrent go routines that fetch pages
-	Concurrency = flag.Int("concurrency", defaultConcurrency, "Number of concurrent go routines that fetch pages")
+	Concurrency = defaultConcurrency
 )
 
 type Page struct {
@@ -83,7 +82,7 @@ func fetchPage(url string) (*Page, error) {
 // Panics if encounters an error
 func FetchAllTransactions() chan []Transaction {
 	ch := make(chan []Transaction)
-	go fetchAllTransactions(ch, urlTemplate, *Concurrency)
+	go fetchAllTransactions(ch, urlTemplate, Concurrency)
 	return ch
 }
 

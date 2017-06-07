@@ -7,6 +7,10 @@ import (
 	"fmt"
 )
 
+func init() {
+	flag.Int("concurrency", defaultConcurrency, "Number of concurrent go routines that fetch pages")
+}
+
 func main() {
 	flag.Parse()
 
@@ -17,8 +21,8 @@ func main() {
 	dailyBalances := DailyBalancesFromTransactions(ch)
 
 	// Print running daily balances
-	fmt.Println(dailyBalances)
+	fmt.Printf("Running Daily Balances:\n%s\n-----------\n", dailyBalances)
 
 	// Print overall balance
-	fmt.Printf("Overall Balance: %v\n", dailyBalances.GetRunningBalance())
+	fmt.Printf("Total Balance: \t%v\n", dailyBalances.GetRunningBalance())
 }
