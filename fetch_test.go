@@ -10,7 +10,6 @@ import (
 	"strings"
 	"sync"
 	"testing"
-	"time"
 )
 
 var (
@@ -79,11 +78,15 @@ var (
 )
 
 type restTestHandler struct {
-	status     int
+	// If status is not 200, it writes it back with an empty body.
+	status int
+	// Number of transactions to serve.
 	totalCount int
-	payload    []byte
+	// If payload is not provided, the handler uses the default mock page.
+	payload []byte // optional
 }
 
+// Mock server
 func (h *restTestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.status != http.StatusOK {
 		w.WriteHeader(h.status)
@@ -111,8 +114,8 @@ func (h *restTestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func TestFetchPage(t *testing.T) {
-	// Test without a mock server
+// Test without a mock server
+func TestFetchPageRemote(t *testing.T) {
 	p, err := FetchPage(1)
 	if err != nil {
 		t.Fatal(err)
@@ -120,70 +123,77 @@ func TestFetchPage(t *testing.T) {
 	if n := p.Page; n != 1 {
 		t.Errorf("Expected page number to be %d, got %d", 1, n)
 	}
+}
 
+func TestFetchPage(t *testing.T) {
 	// start a mock server
-	handler := restTestHandler{status: http.StatusOK, totalCount: 10}
+	handler := restTestHandler{}
 	mockServer := httptest.NewServer(&handler)
 	defer mockServer.Close()
 
-	// Test success case
-	p, err = fetchPage(pageURL(1, mockServer.URL+"/%d"))
-	if err != nil {
-		t.Fatal(err)
+	tests := []struct {
+		status     int
+		totalCount int
+		payload    []byte
+		url        string
+		pageNumber int
+		shouldPass bool
+	}{
+		{http.StatusOK, 10, nil, pageURL(1, mockServer.URL+"/%d"), 1, true},
+
+		{http.StatusNotFound, 0, nil, pageURL(1, mockServer.URL+"/%d"), 1, false},
+		{http.StatusOK, 0, nil, "invalid url", 0, false},
+		{http.StatusOK, 0, []byte("Not JSON"), pageURL(1, mockServer.URL+"/%d"), 0, false},
 	}
 
-	// Assertions
-	if n := p.Page; n != 1 {
-		t.Errorf("Expected page number %d, got %d", 1, n)
-	}
-	if c := p.TotalCount; c != 10 {
-		t.Errorf("Expected total count %d, got %d", 10, c)
-	}
-	if n := len(p.Transactions); n != 10 {
-		t.Errorf("Expected number of transactions %d, got %d", 10, n)
-	}
+	for _, tc := range tests {
+		handler.status = tc.status
+		handler.totalCount = tc.totalCount
+		handler.payload = tc.payload
 
-	tr := p.Transactions[0]
-	if expected, _ := time.Parse(dateTemplate, "2013-12-13"); !tr.Date.Equal(expected) {
-		t.Errorf("Expected transaction date %v, got %v", expected, tr.Date)
-	}
-	if expected := Amount(-117.81); tr.Amount != expected {
-		t.Errorf("Expected transaction amount %s, got %s", expected, tr.Amount)
-	}
-	if tr.Ledger == "" {
-		t.Errorf("Transaction ledger is empty.")
-	}
-	if tr.Company == "" {
-		t.Errorf("Transaction Company is empty.")
-	}
-	// ---
+		// Test success case
+		p, err := fetchPage(tc.url)
 
-	// Test 404 case
-	handler.status = http.StatusNotFound
-	p, err = fetchPage(pageURL(1, mockServer.URL+"/%d"))
-	if e, ok := err.(HTTPError); !ok || e.StatusCode != http.StatusNotFound {
-		t.Error(err)
-	}
+		if tc.shouldPass {
+			if err != nil {
+				t.Fatal(err)
+			}
 
-	// Test 500 case
-	handler.status = http.StatusInternalServerError
-	p, err = fetchPage(pageURL(1, mockServer.URL+"/%d"))
-	if e, ok := err.(HTTPError); !ok || e.StatusCode != http.StatusInternalServerError {
-		t.Error(err)
-	}
+			// Assertions
+			if n := p.Page; n != tc.pageNumber {
+				t.Errorf("Expected page number %d, got %d", tc.pageNumber, n)
+			}
+			if c := p.TotalCount; c != tc.totalCount {
+				t.Errorf("Expected total count %d, got %d", tc.totalCount, c)
+			}
 
-	// Test invalid URL case
-	if _, err = fetchPage("invalid url"); err == nil {
-		t.Error("Expected fetch page to fail because passed url is invalid")
-	}
+			n := len(p.Transactions)
+			if tc.totalCount > transactionsPerPage && n != transactionsPerPage {
+				t.Errorf("Expected number of transactions %d, got %d", tc.totalCount, n)
+			} else if tc.totalCount <= transactionsPerPage && n != tc.totalCount {
+				t.Errorf("Expected number of transactions %d, got %d", transactionsPerPage, n)
+			}
 
-	// TODO
-	// Test invalid json body
-	// handler.payload = []byte("Not JSON")
-	// handler.status = http.StatusOK
-	// if _, err := fetchPage(pageURL(1, mockServer.URL+"/%d")); err == nil {
-	// t.Error("Expected fetch page to fail because response payload is not of the expected format")
-	// }
+			// Assert first transaction
+			tr := p.Transactions[0]
+			if expected := newDate("2013-12-13"); !tr.Date.Equal(expected.Time) {
+				t.Errorf("Expected transaction date %v, got %v", expected, tr.Date)
+			}
+			if expected := Amount(-117.81); tr.Amount != expected {
+				t.Errorf("Expected transaction amount %s, got %s", expected, tr.Amount)
+			}
+			if tr.Ledger == "" {
+				t.Errorf("Transaction ledger is empty.")
+			}
+			if tr.Company == "" {
+				t.Errorf("Transaction Company is empty.")
+			}
+		} else {
+			if e, ok := err.(HTTPError); ok && e.StatusCode != tc.status {
+				t.Error(err)
+			}
+		}
+	}
 }
 
 // Test FetchAllPages without a mock server (i.e. against the real server)
@@ -328,6 +338,7 @@ func TestPageString(t *testing.T) {
 		t.Errorf("Expected page string %s, Got %s", expected, actual)
 	}
 }
+
 func assertPanic(t *testing.T) {
 	r := recover()
 	if r == nil {
