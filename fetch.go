@@ -34,7 +34,7 @@ func init() {
 	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = maxIdleConnections
 }
 
-// Returns the page's fields in a string formatted as JSON
+// Returns the page's fields formatted as JSON
 func (p Page) String() string {
 	return fmt.Sprintf("{\n\tTotal Count: %d,\n\tPage: %d,\n\tTransactions: %v\n}",
 		p.TotalCount, p.Page, p.Transactions)
