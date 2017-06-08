@@ -1,3 +1,6 @@
+[![codecov](https://codecov.io/gh/mujz/restTest/branch/master/graph/badge.svg)](https://codecov.io/gh/mujz/restTest)
+[![Build Status](https://travis-ci.org/mujz/restTest.svg?branch=master)](https://travis-ci.org/mujz/restTest)
+
 # restTest
 
 This is a backend coding assignment for Bench's full-stack software developer application. Scroll down to the [getting started section](##getting-started) for the project description or visit (resttest.bench.co)[http://resttest.bench.co/].
