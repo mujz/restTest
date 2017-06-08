@@ -47,7 +47,7 @@ func (db DailyBalances) String() string {
 // Completes in O(n) number of iterations.
 func (db *DailyBalances) setRunningDailyBalances() {
 	for i := 1; i < len(db.days); i++ {
-		db.balances[db.days[i]] = db.balances[db.days[i]].Add(db.balances[db.days[i-1]])
+		db.balances[db.days[i]] += db.balances[db.days[i-1]]
 	}
 }
 
@@ -95,7 +95,7 @@ func DailyBalancesFromTransactions(ch chan []Transaction) DailyBalances {
 				}
 
 				// increment daily balance
-				db.balances[t.Date] = db.balances[t.Date].Add(t.Amount)
+				db.balances[t.Date] += t.Amount
 
 				mutex.Unlock()
 			}

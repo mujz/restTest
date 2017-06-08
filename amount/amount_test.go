@@ -39,28 +39,6 @@ func TestAmountUnmarshalJSON(t *testing.T) {
 	}
 }
 
-func TestAdd(t *testing.T) {
-	tests := []struct {
-		a        Amount
-		b        Amount
-		expected Amount
-	}{
-		{Amount(1010), Amount(1010), Amount(2020)},
-		{Amount(1011), Amount(1099), Amount(2110)},
-		{Amount(-1010), Amount(1010), Amount(0)},
-		{Amount(1010), Amount(-1010), Amount(0)},
-		{Amount(-1010), Amount(-1010), Amount(-2020)},
-	}
-
-	for _, tc := range tests {
-		actual := tc.a.Add(tc.b)
-
-		if tc.expected != actual {
-			t.Errorf("Expected sum %d, Got %d", tc.expected, actual)
-		}
-	}
-}
-
 func TestFromFloat(t *testing.T) {
 	tests := []struct {
 		in       float64
