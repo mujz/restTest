@@ -12,7 +12,7 @@ func TestDateUnmarshalJSON(t *testing.T) {
 	}{
 		{"2006-01-02", true},
 		{"null", true},
-		{"2006-01-00", false},
+		{"2006-01-50", false},
 		{"2006-13-03", false},
 		{"1990", false},
 		{"1990 March 30", false},
