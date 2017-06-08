@@ -8,7 +8,7 @@ import (
 
 const dateTemplate = "2006-01-02"
 
-// A representation of time.Time using layout "2006-01-02".
+// Date is a representation of time.Time using layout "2006-01-02".
 // Implements json.Unmarshaler.
 type Date struct{ time.Time }
 
@@ -24,7 +24,7 @@ func (d byDate) Less(i, j int) bool { return d[i].Before(d[j].Time) }
 // and O(n*log(n)) calls to data.Less and data.Swap.
 func (d byDate) Sort() { sort.Sort(d) }
 
-// Unmarshalls byte slice into date.
+// UnmarshalJSON unmarshalls byte slice into date.
 func (date *Date) UnmarshalJSON(b []byte) (err error) {
 	// remove quotation marks from string
 	s := strings.Trim(string(b), "\"")

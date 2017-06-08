@@ -2,7 +2,7 @@ package restTest
 
 import "fmt"
 
-// Returned when a remote server responds with a non-200 status code.
+// HTTPError is returned when a remote server responds with a non-200 status code.
 type HTTPError struct {
 	// Error status string. Ex. 404 Not Found. Matches http.Response.Status.
 	Status string

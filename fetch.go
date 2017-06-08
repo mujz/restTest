@@ -9,21 +9,22 @@ import (
 )
 
 const (
-	// REST API url
+	// REST API url.
 	urlTemplate = "http://resttest.bench.co/transactions/%d.json"
-	// Maximum number of transaction per page
+	// Maximum number of transaction per page.
 	transactionsPerPage = 10
-	// Maximum number of idle http connections
+	// Maximum number of idle http connections.
 	maxIdleConnections = 100
-	// Default number of concurrent go routines to fetch pages
+	// DefaultConcurrency is the default number of concurrent go routines to fetch pages.
 	DefaultConcurrency = 20
 )
 
 var (
-	// Number of concurrent go routines that fetch pages
+	// Concurrency is the number of concurrent go routines that fetch pages.
 	Concurrency = DefaultConcurrency
 )
 
+// Page represents a slice of transactions.
 type Page struct {
 	// Total number of transactions (in this page plus all other pages).
 	TotalCount int
@@ -43,7 +44,7 @@ func (p Page) String() string {
 		p.TotalCount, p.Page, p.Transactions)
 }
 
-// Fetches the page from the restTest API server and decodes it into Page.
+// FetchPage fetches the page from the restTest API server and decodes it into Page.
 // Returns HTTPError if response status is not 200.
 func FetchPage(pageNumber int) (*Page, error) {
 	return fetchPage(pageURL(pageNumber, urlTemplate))
@@ -77,7 +78,7 @@ func fetchPage(url string) (*Page, error) {
 	return page, nil
 }
 
-// Fetches all pages from the restTest API and
+// FetchAllTransactions fetches all pages from the restTest API and
 // puts the slice of transactions (max transactions per slice = 10)
 // from each page over a channel. It closes the channel once all
 // transactions are put to the channel.

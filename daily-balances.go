@@ -8,18 +8,18 @@ import (
 	"github.com/mujz/restTest/amount"
 )
 
-// Representation of financial transaction.
+// Transaction representation of financial transaction.
 type Transaction struct {
 	// Date of the transaction in layout 2006-01-02.
 	Date   Date
 	Ledger string
-	// Transactoun amount with a precision of up to 2 decimal places.
+	// Transaction amount with a precision of up to 2 decimal places.
 	Amount amount.Amount
 	// Company name
 	Company string
 }
 
-// Data structure for representing dates and their balances.
+// DailyBalances data structure for representing dates and their balances.
 // It is optimized for efficient and fast sorting by date.
 type DailyBalances struct {
 	// Store days, which are the keys of the dailyBalances map, in a separate slice.
@@ -51,18 +51,18 @@ func (db *DailyBalances) setRunningDailyBalances() {
 	}
 }
 
-// Returns the last day's balance.
+// GetRunningBalance returns the last day's balance.
 func (db DailyBalances) GetRunningBalance() amount.Amount {
 	return db.balances[db.days[len(db.days)-1]]
 }
 
-// Sorts the daily balances by date in ascending order.
+// Sort the daily balances by date in ascending order.
 // It implements the standard package's sort.Sort.
 func (db *DailyBalances) Sort() {
 	byDate(db.days).Sort()
 }
 
-// Receives transaction slices over the channel, sorts them, and calculates
+// DailyBalancesFromTransactions receives transaction slices over the channel, sorts them, and calculates
 // their running daily balances. It returns after the channel is closed.
 //
 // Blocks until it finishes processing all transactions.

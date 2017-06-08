@@ -4,6 +4,9 @@ GOARCH=amd64
 
 all: run
 
+lint:
+	golint
+
 fmt:
 	gofmt -s -w .
 
@@ -11,30 +14,30 @@ install:
 	cd ${BUILD_DIR}; \
 		go build -o ${GOBIN}/restTest
 
-build: fmt
+build: lint fmt
 	cd ${BUILD_DIR}; \
 		go build -o ${BUILD_OUTPUT}
 
-linux:
+linux: lint fmt
 	cd ${BUILD_DIR}; \
 	GOOS=linux GOARCH=${GOARCH} go build -o ${BUILD_OUTPUT}-linux-${GOARCH}
 
-darwin:
+darwin: lint fmt
 	cd ${BUILD_DIR}; \
 	GOOS=darwin GOARCH=${GOARCH} go build -o ${BUILD_OUTPUT}-darwin-${GOARCH}
 
-windows:
+windows: lint fmt
 	cd ${BUILD_DIR}; \
 	GOOS=windows GOARCH=${GOARCH} go build -o ${BUILD_OUTPUT}-windows-${GOARCH}.exe
 
 run: build
 	./bin/restTest
 
-test: fmt
+test: fmt lint
 	go test -v -race -coverprofile coverage.out
 	go tool cover -func=./coverage.out
 
-clean: fmt
+clean:
 	rm -f ./coverage.out
 
-.PHONY: build run test clean
+.PHONY: lint fmt install build linux darwin windows run test clean
