@@ -10,7 +10,7 @@ type HTTPError struct {
 	StatusCode int
 }
 
-// Implements error
+// Implements error.
 func (err HTTPError) Error() string {
 	return fmt.Sprintf("Remote server responded with status: %s", err.Status)
 }

@@ -29,7 +29,7 @@ type DailyBalances struct {
 	balances map[Date]amount.Amount
 }
 
-// Returns the transaction's fields formatted as JSON
+// Returns the transaction's fields formatted as JSON.
 func (t Transaction) String() string {
 	return fmt.Sprintf("{\n\tDate: %v,\n\tLedger: %s,\n\tAmount: %s,\n\tCompany: %s\n}", t.Date.Format(dateTemplate), t.Ledger, t.Amount, t.Company)
 }

@@ -8,11 +8,11 @@ import (
 
 const dateTemplate = "2006-01-02"
 
-// A representation of time.Time using layout "2006-01-02"
-// Implements json.Unmarshaler
+// A representation of time.Time using layout "2006-01-02".
+// Implements json.Unmarshaler.
 type Date struct{ time.Time }
 
-// Implements sort.Interface to enable sorting a date slice
+// Implements sort.Interface to enable sorting a date slice.
 type byDate []Date
 
 func (d byDate) Len() int           { return len(d) }
@@ -24,7 +24,7 @@ func (d byDate) Less(i, j int) bool { return d[i].Before(d[j].Time) }
 // and O(n*log(n)) calls to data.Less and data.Swap.
 func (d byDate) Sort() { sort.Sort(d) }
 
-// Unmarshalls byte slice into date
+// Unmarshalls byte slice into date.
 func (date *Date) UnmarshalJSON(b []byte) (err error) {
 	// remove quotation marks from string
 	s := strings.Trim(string(b), "\"")

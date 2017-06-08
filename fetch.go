@@ -15,18 +15,21 @@ const (
 	transactionsPerPage = 10
 	// Maximum number of idle http connections
 	maxIdleConnections = 100
-	// default number of concurrent go routines to fetch pages
+	// Default number of concurrent go routines to fetch pages
 	DefaultConcurrency = 20
 )
 
 var (
-	// number of concurrent go routines that fetch pages
+	// Number of concurrent go routines that fetch pages
 	Concurrency = DefaultConcurrency
 )
 
 type Page struct {
-	TotalCount   int
-	Page         int
+	// Total number of transactions (in this page plus all other pages).
+	TotalCount int
+	// Page number. Index starts 1 (not 0).
+	Page int
+	// Page's transactions. Must not exceed 10 entries.
 	Transactions []Transaction
 }
 
@@ -34,14 +37,14 @@ func init() {
 	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = maxIdleConnections
 }
 
-// Returns the page's fields formatted as JSON
+// Returns the page's fields formatted as JSON.
 func (p Page) String() string {
 	return fmt.Sprintf("{\n\tTotal Count: %d,\n\tPage: %d,\n\tTransactions: %v\n}",
 		p.TotalCount, p.Page, p.Transactions)
 }
 
 // Fetches the page from the restTest API server and decodes it into Page.
-// Returns HTTPError if response status is not 200
+// Returns HTTPError if response status is not 200.
 func FetchPage(pageNumber int) (*Page, error) {
 	return fetchPage(pageURL(pageNumber, urlTemplate))
 }
@@ -79,7 +82,7 @@ func fetchPage(url string) (*Page, error) {
 // from each page over a channel. It closes the channel once all
 // transactions are put to the channel.
 //
-// Panics if encounters an error
+// Panics if encounters an error.
 func FetchAllTransactions() chan []Transaction {
 	ch := make(chan []Transaction)
 	go fetchAllTransactions(ch, urlTemplate, Concurrency)
