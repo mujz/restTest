@@ -33,7 +33,7 @@ windows: lint fmt
 run: build
 	./bin/restTest
 
-test: fmt lint
+test: fmt
 	go test -v -race -coverprofile coverage.out
 	go tool cover -func=./coverage.out
 
