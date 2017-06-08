@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+
+	"github.com/mujz/restTest/amount"
 )
 
 // Representation of financial transaction.
@@ -12,7 +14,7 @@ type Transaction struct {
 	Date   Date
 	Ledger string
 	// Transactoun amount with a precision of up to 2 decimal places.
-	Amount Amount
+	Amount amount.Amount
 	// Company name
 	Company string
 }
@@ -24,19 +26,19 @@ type DailyBalances struct {
 	// This makes it more efficient for sorting; sorting a slice is much faster than
 	// sorting a map.
 	days     []Date
-	balances map[Date]Amount
+	balances map[Date]amount.Amount
 }
 
 // Returns the transaction's fields formatted as JSON
 func (t Transaction) String() string {
-	return fmt.Sprintf("{\n\tDate: %v,\n\tLedger: %s,\n\tAmount: %v,\n\tCompany: %s\n}", t.Date.Format(dateTemplate), t.Ledger, t.Amount, t.Company)
+	return fmt.Sprintf("{\n\tDate: %v,\n\tLedger: %s,\n\tAmount: %s,\n\tCompany: %s\n}", t.Date.Format(dateTemplate), t.Ledger, t.Amount, t.Company)
 }
 
 // Returns the daily balances fields formatted as day:	balance
 func (db DailyBalances) String() string {
 	var s []string
 	for _, day := range db.days {
-		s = append(s, fmt.Sprintf("%s:\t%.2f", day.Format(dateTemplate), db.balances[day]))
+		s = append(s, fmt.Sprintf("%s:\t%s", day.Format(dateTemplate), db.balances[day]))
 	}
 	return strings.Join(s, "\n")
 }
@@ -50,7 +52,7 @@ func (db *DailyBalances) setRunningDailyBalances() {
 }
 
 // Returns the last day's balance.
-func (db DailyBalances) GetRunningBalance() Amount {
+func (db DailyBalances) GetRunningBalance() amount.Amount {
 	return db.balances[db.days[len(db.days)-1]]
 }
 
@@ -69,7 +71,7 @@ func DailyBalancesFromTransactions(ch chan []Transaction) DailyBalances {
 		wg    sync.WaitGroup
 		mutex = &sync.Mutex{}
 
-		db = DailyBalances{balances: make(map[Date]Amount)}
+		db = DailyBalances{balances: make(map[Date]amount.Amount)}
 	)
 
 	// Waits for transaction slices to come then launches a go routine for each
