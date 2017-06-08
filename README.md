@@ -1,3 +1,4 @@
+[![GoDoc](https://godoc.org/github.com/mujz/restTest?status.svg)](https://godoc.org/github.com/mujz/restTest)
 [![codecov](https://codecov.io/gh/mujz/restTest/branch/master/graph/badge.svg)](https://codecov.io/gh/mujz/restTest)
 [![Build Status](https://travis-ci.org/mujz/restTest.svg?branch=master)](https://travis-ci.org/mujz/restTest)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mujz/Resttest)](https://goreportcard.com/report/github.com/mujz/Resttest)
