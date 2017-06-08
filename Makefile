@@ -1,10 +1,27 @@
+BUILD_OUTPUT=../bin/restTest
+BUILD_DIR=cmd
+GOARCH=amd64
+
 all: run
 
 fmt:
 	go fmt
 
 build: fmt
-	cd cmd && go build -o ../bin/restTest
+	cd ${BUILD_DIR}; \
+		go build -o ${BUILD_DIR}
+
+linux:
+	cd ${BUILD_DIR}; \
+	GOOS=linux GOARCH=${GOARCH} go build -o ${BUILD_OUTPUT}-linux-${GOARCH}
+
+darwin:
+	cd ${BUILD_DIR}; \
+	GOOS=darwin GOARCH=${GOARCH} go build -o ${BUILD_OUTPUT}-darwin-${GOARCH}
+
+windows:
+	cd ${BUILD_DIR}; \
+	GOOS=windows GOARCH=${GOARCH} go build -o ${BUILD_OUTPUT}-windows-${GOARCH}.exe
 
 run: build
 	./bin/restTest
