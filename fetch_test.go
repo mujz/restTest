@@ -325,7 +325,7 @@ func TestPageString(t *testing.T) {
 	p := Page{
 		TotalCount: 1,
 		Page:       1,
-		Transactions: []Transaction{Transaction{
+		Transactions: []Transaction{{
 			Date:    newDate("2006-02-01"),
 			Ledger:  "Ledger 1",
 			Amount:  amount.Amount(10049),

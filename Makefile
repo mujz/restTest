@@ -5,7 +5,7 @@ GOARCH=amd64
 all: run
 
 fmt:
-	go fmt
+	gofmt -s -w .
 
 install:
 	cd ${BUILD_DIR}; \

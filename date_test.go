@@ -83,7 +83,7 @@ func TestByDateSort(t *testing.T) {
 }
 
 func TestByDateLen(t *testing.T) {
-	tc := byDate([]Date{Date{}, Date{}})
+	tc := byDate([]Date{{}, {}})
 	actual := tc.Len()
 	if expected := 2; actual != expected {
 		t.Errorf("Expected length %d, got %d", expected, actual)

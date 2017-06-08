@@ -134,11 +134,11 @@ func TestDailyBalancesFromTransactions(t *testing.T) {
 		// Test case 1
 		{
 			transactions: [][]Transaction{
-				[]Transaction{
+				{
 					{days[2], "L1", amount.Amount(-167445), "C1"},
 					{days[0], "L2", amount.Amount(10001), "C2"},
 					{days[1], "L3", amount.Amount(20002), "C3"},
-				}, []Transaction{
+				}, {
 					{days[2], "L4", amount.Amount(10049), "C1"},
 					{days[1], "L5", amount.Amount(5025), "C2"},
 					{days[1], "L6", amount.Amount(3914), "C3"},
@@ -154,7 +154,7 @@ func TestDailyBalancesFromTransactions(t *testing.T) {
 			},
 		},
 		// Test case 2: Empty transactions set
-		{[][]Transaction{[]Transaction{}}, DailyBalances{[]Date{}, map[Date]amount.Amount{}}},
+		{[][]Transaction{{}}, DailyBalances{[]Date{}, map[Date]amount.Amount{}}},
 	}
 
 	for _, tc := range tests {
