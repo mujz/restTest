@@ -7,9 +7,13 @@ all: run
 fmt:
 	go fmt
 
+install:
+	cd ${BUILD_DIR}; \
+		go build -o ${GOBIN}/restTest
+
 build: fmt
 	cd ${BUILD_DIR}; \
-		go build -o ${BUILD_DIR}
+		go build -o ${BUILD_OUTPUT}
 
 linux:
 	cd ${BUILD_DIR}; \

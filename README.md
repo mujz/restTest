@@ -3,13 +3,13 @@
 
 # restTest
 
-This is a backend coding assignment for Bench's full-stack software developer application. Scroll down to the [getting started section](##getting-started) for the project description or visit (resttest.bench.co)[http://resttest.bench.co/].
+This is a backend coding assignment for Bench's full-stack software developer application. Scroll down to the [getting started section](#getting-started) for the project description or visit [resttest.bench.co](http://resttest.bench.co/).
 
 ## Run it yourself
 
 ### From compiled binaries
 
-Download and run right binary for your system from the [`/bin`](bin/) directory.
+Download and run the right binary for your system from the [`/bin`](bin/) directory.
 
 ### Build and install binaries from source
 
@@ -17,15 +17,57 @@ You need to have golang installed, then run:
 
 ```bash
 go get -v github.com/mujz/restTest
+cd $GOPATH/src/github.com/mujz/restTest
+make install
 ```
+
+## Usage
+
+Once you install the binary, just run:
+
+```bash
+restTest
+```
+
+You can also set the flag `-concurrency`, which is the number of go routines that run conncurently to fetch transaction pages.
 
 ## Implementation
 
-Since we need to execute multiple operations concurrently (ex. fetching pages, calculating the balance), it's preferrable to use a language the has support for coroutines. Thus, I'm choosing to use Go. Here's how it will work:
+Since we need to execute multiple operations concurrently (ex. fetching pages, calculating the balance), it's preferrable to use a language that has support for coroutines (or lightweight threads) such as Go or Kotlin. Thus, I'm choosing to use Go. Here's how this works:
 
 1. We use the standard `net/http` package to make a simple GET request. This function will be used by the next 2 operations.
-1. We fetch the first page and read the `totalCount` to know how many pages to fetch. We then start as many coroutines as the number of pages minus 1 (since we don't need to refetch the first page). Each coroutine fetches a page and atomically increments the balance of that day.
+1. We fetch the first page and read the `totalCount` to know how many pages to fetch. We then start as many coroutines as the number of pages minus 1 (since we don't need to re-fetch the first page). However, we must limit the number of concurrent coroutines to avoid running into too many http requests errors. Each coroutine fetches a page and sends its transactions over a channel to another coroutine that processes them.
+1. The coroutine that receives the transactions calculates each date's transactions and dies. We start a new coroutine for each page of transactions until the channel closes. Once the channel closes, we sort the daily balances and add them to each other to find the running daily balances.
 1. After all coroutines finish, we print the running daily balances and overall balance to the console.
+
+## Known Limitations
+
+### Monetary Amounts Data Structure
+
+There are multiple ways to represent fractioned monetary amounts. One way is to store dollars and cents as separate integers (or only count using cents). Another is to use decimals (which Go lacks). My choice was to store them as cents. If the number has more than 2 decimal places, I round it to the nearest cent.
+
+### Too many loops
+
+With the current implementation, the app makes these loops:
+
+1. Fetch pages and increment daily balances.
+1. Sort daily balances.
+1. Calculate running daily balances.
+1. Print daily balances.
+
+Since the number of transactions is not that big, this implementation is clean and works well. However, if the number of transaction grows, some of those loops should be consolidated.
+
+The last two loops could merge into one. We can prepare the daily balances string as we calculate the running daily balances and have it ready when we call print.
+
+Consolidating the first 2 loops requires using an insertion sort algorithm, which is less efficient than the one I'm using (which is implemented by the Go standard package).
+
+Merging the second and third don't work either since we need the daily transactions to be sorted by day before we can calculate the daily balances.
+
+Therefore, only the last two loops can be joined, but since they make the code less clear and the cost is not that big (O(2n) instead of O(n)), I chose to go with this implementation.
+
+Additionally, I've optimized the sorting by saving the days (the daily balances map has `day: balance`) into a separate slice since sorting a slice is much faster than sorting a map.
+
+---
 
 ## Getting Started
 
