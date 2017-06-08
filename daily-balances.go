@@ -5,7 +5,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/mujz/restTest/amount"
+	"github.com/mujz/restTest/money"
 )
 
 // Transaction representation of financial transaction.
@@ -14,7 +14,7 @@ type Transaction struct {
 	Date   Date
 	Ledger string
 	// Transaction amount with a precision of up to 2 decimal places.
-	Amount amount.Amount
+	Amount money.Amount
 	// Company name
 	Company string
 }
@@ -26,7 +26,7 @@ type DailyBalances struct {
 	// This makes it more efficient for sorting; sorting a slice is much faster than
 	// sorting a map.
 	days     []Date
-	balances map[Date]amount.Amount
+	balances map[Date]money.Amount
 }
 
 // Returns the transaction's fields formatted as JSON.
@@ -52,7 +52,7 @@ func (db *DailyBalances) setRunningDailyBalances() {
 }
 
 // GetRunningBalance returns the last day's balance.
-func (db DailyBalances) GetRunningBalance() amount.Amount {
+func (db DailyBalances) GetRunningBalance() money.Amount {
 	return db.balances[db.days[len(db.days)-1]]
 }
 
@@ -71,7 +71,7 @@ func DailyBalancesFromTransactions(ch chan []Transaction) DailyBalances {
 		wg    sync.WaitGroup
 		mutex = &sync.Mutex{}
 
-		db = DailyBalances{balances: make(map[Date]amount.Amount)}
+		db = DailyBalances{balances: make(map[Date]money.Amount)}
 	)
 
 	// Waits for transaction slices to come then launches a go routine for each

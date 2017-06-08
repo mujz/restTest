@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mujz/restTest/amount"
+	"github.com/mujz/restTest/money"
 )
 
 func TestDailyBalancesString(t *testing.T) {
@@ -14,9 +14,9 @@ func TestDailyBalancesString(t *testing.T) {
 	}
 	db := DailyBalances{
 		d,
-		map[Date]amount.Amount{
-			d[0]: amount.Amount(10049),
-			d[1]: amount.Amount(19950),
+		map[Date]money.Amount{
+			d[0]: money.Amount(10049),
+			d[1]: money.Amount(19950),
 		},
 	}
 
@@ -35,22 +35,22 @@ func TestSetRunningDailyBalances(t *testing.T) {
 	}
 	db := DailyBalances{
 		d,
-		map[Date]amount.Amount{
-			d[0]: amount.Amount(10049),
-			d[1]: amount.Amount(10049),
-			d[2]: amount.Amount(19950),
+		map[Date]money.Amount{
+			d[0]: money.Amount(10049),
+			d[1]: money.Amount(10049),
+			d[2]: money.Amount(19950),
 		},
 	}
 
 	db.setRunningDailyBalances()
 
 	tests := []struct {
-		expected amount.Amount
-		actual   amount.Amount
+		expected money.Amount
+		actual   money.Amount
 	}{
-		{amount.Amount(10049), db.balances[d[0]]},
-		{amount.Amount(20098), db.balances[d[1]]},
-		{amount.Amount(40048), db.balances[d[2]]},
+		{money.Amount(10049), db.balances[d[0]]},
+		{money.Amount(20098), db.balances[d[1]]},
+		{money.Amount(40048), db.balances[d[2]]},
 	}
 
 	for _, tc := range tests {
@@ -68,10 +68,10 @@ func TestDailyBalancesGetRunningBalance(t *testing.T) {
 	}
 	db := DailyBalances{
 		d,
-		map[Date]amount.Amount{
-			d[0]: amount.Amount(10049),
-			d[1]: amount.Amount(10049),
-			d[2]: amount.Amount(19950),
+		map[Date]money.Amount{
+			d[0]: money.Amount(10049),
+			d[1]: money.Amount(10049),
+			d[2]: money.Amount(19950),
 		},
 	}
 
@@ -79,7 +79,7 @@ func TestDailyBalancesGetRunningBalance(t *testing.T) {
 
 	actual := db.GetRunningBalance()
 
-	if expected := amount.Amount(40048); expected != actual {
+	if expected := money.Amount(40048); expected != actual {
 		t.Errorf("Expected running balance: %.2f, Got:%.2f", expected, actual)
 	}
 }
@@ -90,22 +90,22 @@ func TestDailyBalancesSort(t *testing.T) {
 	d2 := newDate("2016-04-02")
 	db := DailyBalances{
 		[]Date{d0, d1, d2},
-		map[Date]amount.Amount{
-			d0: amount.Amount(10049),
-			d1: amount.Amount(30051),
-			d2: amount.Amount(20050),
+		map[Date]money.Amount{
+			d0: money.Amount(10049),
+			d1: money.Amount(30051),
+			d2: money.Amount(20050),
 		},
 	}
 
 	db.Sort()
 
 	expected := []struct {
-		date   Date          // expected date
-		amount amount.Amount // expected amount
+		date   Date         // expected date
+		amount money.Amount // expected amount
 	}{
-		{d1, amount.Amount(30051)},
-		{d2, amount.Amount(20050)},
-		{d0, amount.Amount(10049)},
+		{d1, money.Amount(30051)},
+		{d2, money.Amount(20050)},
+		{d0, money.Amount(10049)},
 	}
 	actual := db.days
 
@@ -135,26 +135,26 @@ func TestDailyBalancesFromTransactions(t *testing.T) {
 		{
 			transactions: [][]Transaction{
 				{
-					{days[2], "L1", amount.Amount(-167445), "C1"},
-					{days[0], "L2", amount.Amount(10001), "C2"},
-					{days[1], "L3", amount.Amount(20002), "C3"},
+					{days[2], "L1", money.Amount(-167445), "C1"},
+					{days[0], "L2", money.Amount(10001), "C2"},
+					{days[1], "L3", money.Amount(20002), "C3"},
 				}, {
-					{days[2], "L4", amount.Amount(10049), "C1"},
-					{days[1], "L5", amount.Amount(5025), "C2"},
-					{days[1], "L6", amount.Amount(3914), "C3"},
+					{days[2], "L4", money.Amount(10049), "C1"},
+					{days[1], "L5", money.Amount(5025), "C2"},
+					{days[1], "L6", money.Amount(3914), "C3"},
 				},
 			},
 			expected: DailyBalances{
 				days,
-				map[Date]amount.Amount{
-					days[0]: amount.Amount(10001),
-					days[1]: amount.Amount(38942),
-					days[2]: amount.Amount(-118454),
+				map[Date]money.Amount{
+					days[0]: money.Amount(10001),
+					days[1]: money.Amount(38942),
+					days[2]: money.Amount(-118454),
 				},
 			},
 		},
 		// Test case 2: Empty transactions set
-		{[][]Transaction{{}}, DailyBalances{[]Date{}, map[Date]amount.Amount{}}},
+		{[][]Transaction{{}}, DailyBalances{[]Date{}, map[Date]money.Amount{}}},
 	}
 
 	for _, tc := range tests {

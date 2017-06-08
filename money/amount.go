@@ -1,6 +1,6 @@
-/*Package amount deals with representing monetary amounts in Go. It represents money amounts as integers. For example, 30 dollars and 5 cents would be represented as 3005. However, calling the String() method on an amount returns a string in dollars and cents. For example, the previous amount would be "30.05".
+/*Package money deals with representing monetary amounts in Go. It represents money amounts as integers. For example, 30 dollars and 5 cents would be represented as 3005. However, calling the String() method on an amount returns a string in dollars and cents. For example, the previous amount would be "30.05".
  */
-package amount
+package money
 
 import (
 	"fmt"

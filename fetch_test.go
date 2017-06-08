@@ -11,7 +11,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/mujz/restTest/amount"
+	"github.com/mujz/restTest/money"
 )
 
 var (
@@ -181,7 +181,7 @@ func TestFetchPage(t *testing.T) {
 			if expected := newDate("2013-12-13"); !tr.Date.Equal(expected.Time) {
 				t.Errorf("Expected transaction date %v, got %v", expected, tr.Date)
 			}
-			if expected := amount.Amount(-11781); tr.Amount != expected {
+			if expected := money.Amount(-11781); tr.Amount != expected {
 				t.Errorf("Expected transaction amount %s, got %s", expected, tr.Amount)
 			}
 			if tr.Ledger == "" {
@@ -309,7 +309,7 @@ func TestTransportString(t *testing.T) {
 	tr := Transaction{
 		Date:    newDate("2006-02-01"),
 		Ledger:  "Ledger 1",
-		Amount:  amount.Amount(10049),
+		Amount:  money.Amount(10049),
 		Company: "Bench",
 	}
 	expected := fmt.Sprintf("{\n\tDate: %v,\n\tLedger: %s,\n\tAmount: %v,\n\tCompany: %s\n}",
@@ -328,7 +328,7 @@ func TestPageString(t *testing.T) {
 		Transactions: []Transaction{{
 			Date:    newDate("2006-02-01"),
 			Ledger:  "Ledger 1",
-			Amount:  amount.Amount(10049),
+			Amount:  money.Amount(10049),
 			Company: "Bench",
 		}},
 	}
