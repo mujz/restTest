@@ -1,5 +1,6 @@
 [![codecov](https://codecov.io/gh/mujz/restTest/branch/master/graph/badge.svg)](https://codecov.io/gh/mujz/restTest)
 [![Build Status](https://travis-ci.org/mujz/restTest.svg?branch=master)](https://travis-ci.org/mujz/restTest)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mujz/restTest)](https://goreportcard.com/report/github.com/mujz/restTest)
 
 # restTest
 
